@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>-详情</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!-- 所有的 css js 资源 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css">
+		<link rel="stylesheet" href="../../static/sa.css">
+		<script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+		<script src="https://unpkg.com/element-ui@2.13.0/lib/index.js"></script>
+		<script src="https://unpkg.com/http-vue-loader@1.4.2/src/httpVueLoader.js"></script>
+		<script src="https://unpkg.com/jquery@3.4.1/dist/jquery.js"></script>
+		<script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
+		<script src="../../static/sa.js"></script>
+		<style type="text/css">
+			.c-panel .c-label{width: 8em;}
+		</style>
+	</head>
+	<body>
+		<div class="vue-box sbot" style="display: none;" :style="'display: block;'">
+			<!-- ------- 内容部分 ------- -->
+			<div class="s-body">
+				<div class="c-panel">
+					<el-form v-if="m">
+						<sa-info name="任务来源" br>{{m.rwly}}</sa-info>
+						<sa-info name="任务来源省" br>{{m.rwlys}}</sa-info>
+						<sa-info name="报告书编号" br>{{m.bgsbh}}</sa-info>
+						<sa-info name="报告分类" br>{{m.bgfl}}</sa-info>
+						<sa-info type="datetime" name="报告日期" :value="m.bgrq" br></sa-info>
+						<sa-info name="报送分类1" br>{{m.bsfl1}}</sa-info>
+						<sa-info name="报送分类2" br>{{m.bsfl2}}</sa-info>
+						<sa-info type="datetime" name="抽样时间" :value="m.cysj" br></sa-info>
+						<sa-info name="抽样场所" br>{{m.cycs}}</sa-info>
+						<sa-info name="抽样环节" br>{{m.cyhj}}</sa-info>
+						<sa-info name="抽样编号" br>{{m.cybh}}</sa-info>
+						<sa-info type="datetime" name="更新时间" :value="m.gxsj" br></sa-info>
+						<sa-info name="被抽样单位名称" br>{{m.bcydwmc}}</sa-info>
+						<sa-info name="被抽样单位地址" br>{{m.bcydwdz}}</sa-info>
+						<sa-info name="标识生产企业名称" br>{{m.bsscqymc}}</sa-info>
+						<sa-info name="标识生产企业地址" br>{{m.bsscqydz}}</sa-info>
+						<sa-info name="样品名称" br>{{m.ypmc}}</sa-info>
+						<sa-info name="食品亚类" br>{{m.spyl}}</sa-info>
+						<sa-info name="食品大类" br>{{m.spdl}}</sa-info>
+						<sa-info name="食品次亚类" br>{{m.spcyl}}</sa-info>
+						<sa-info name="食品细类" br>{{m.spxl}}</sa-info>
+						<sa-info name="样品规格" br>{{m.ypgg}}</sa-info>
+						<sa-info type="datetime" name="生产日期" :value="m.scrq" br></sa-info>
+						<sa-info name="样品状态" br>{{m.ypzt}}</sa-info>
+						<sa-info type="datetime" name="创建时间" :value="m.cjrq" br></sa-info>
+						<sa-info type="datetime" name="更新日期" :value="m.gxrq" br></sa-info>
+						<sa-info type="num" name="记录id" :value="m.id" br></sa-info>
+					</el-form>
+				</div>
+			</div>
+			<!-- ------- 底部按钮 ------- -->
+			<div class="s-foot">
+				<el-button type="success" @click="sa.closeCurrIframe()">确定</el-button>
+				<el-button @click="sa.closeCurrIframe()">取消</el-button>
+			</div>
+		</div>
+		<script>
+			var app = new Vue({
+				components: {
+					"sa-info": httpVueLoader('../../sa-frame/com/sa-info.vue')
+				},
+				el: '.vue-box',
+				data: {
+					id: sa.p('id', 0),	// 获取数据ID 
+					m: null
+				},
+				methods: {
+				},
+				mounted: function() {
+					sa.ajax('/ZqjcFullData/getById?id=' + this.id, function(res) {
+						this.m = res.data;
+						if(res.data == null) {
+							sa.alert('未能查找到 id=' + this.id + " 详细数据");
+						}
+					}.bind(this))
+				}
+			})
+			
+		</script>
+	</body>
+</html>

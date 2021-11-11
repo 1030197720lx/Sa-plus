@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>-列表</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!-- 所有的 css & js 资源 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css">
+		<link rel="stylesheet" href="../../static/sa.css">
+		<script src="https://unpkg.com/vue@2.6.10/dist/vue.js"></script>
+		<script src="https://unpkg.com/element-ui@2.13.0/lib/index.js"></script>
+		<script src="https://unpkg.com/http-vue-loader@1.4.2/src/httpVueLoader.js"></script>
+		<script src="https://unpkg.com/jquery@3.4.1/dist/jquery.js"></script>
+		<script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
+		<script src="../../static/sa.js"></script>
+	</head>
+	<body>
+		<div class="vue-box" style="display: none;" :style="'display: block;'">
+			<div class="c-panel">
+				<!-- ------------- 检索参数 ------------- -->
+				<div class="c-title">检索参数</div>
+				<el-form ref="form" :model='p' @submit.native.prevent>
+					<sa-item type="text" name="任务来源" v-model="p.rwly"></sa-item>
+					<sa-item type="text" name="报告书编号" v-model="p.bgsbh"></sa-item>
+					<sa-item type="text" name="报告分类" v-model="p.bgfl"></sa-item>
+					<sa-item type="text" name="报送分类1" v-model="p.bsfl1"></sa-item>
+					<sa-item type="text" name="报送分类2" v-model="p.bsfl2"></sa-item>
+					<sa-item type="text" name="抽样场所" v-model="p.cycs"></sa-item>
+					<sa-item type="text" name="抽样环节" v-model="p.cyhj"></sa-item>
+					<sa-item type="text" name="抽样编号" v-model="p.cybh"></sa-item>
+					<sa-item type="text" name="被抽样单位名称" v-model="p.bcydwmc"></sa-item>
+					<sa-item type="text" name="样品名称" v-model="p.ypmc"></sa-item>
+					<sa-item type="text" name="食品亚类" v-model="p.spyl"></sa-item>
+					<sa-item type="text" name="食品大类" v-model="p.spdl"></sa-item>
+					<sa-item type="text" name="食品次亚类" v-model="p.spcyl"></sa-item>
+					<sa-item type="text" name="食品细类" v-model="p.spxl"></sa-item>
+					<sa-item type="text" name="样品状态" v-model="p.ypzt"></sa-item>
+					<el-button type="primary" icon="el-icon-search" @click="p.pageNo = 1; f5()">查询</el-button>
+					<br />
+					<sa-item name="综合排序">
+						<el-radio-group v-model="p.sortType" class="s-radio-text">
+							<el-radio :label="0">默认</el-radio>
+							<el-radio :label="5">报告日期</el-radio>
+							<el-radio :label="8">抽样时间</el-radio>
+							<el-radio :label="11">抽样编号</el-radio>
+							<el-radio :label="12">更新时间</el-radio>
+							<el-radio :label="25">创建时间</el-radio>
+							<el-radio :label="26">更新日期</el-radio>
+						</el-radio-group>
+					</sa-item>
+				</el-form>
+				<!-- ------------- 快捷按钮 ------------- -->
+				<sa-item type="fast-btn" show="add,get,delete,export,reset"></sa-item>
+				<!-- ------------- 数据列表 ------------- -->
+				<el-table class="data-table" ref="data-table" :data="dataList" >
+					<sa-td type="selection"></sa-td>
+					<sa-td name="任务来源" prop="rwly" ></sa-td>
+					<sa-td name="任务来源省" prop="rwlys" ></sa-td>
+					<sa-td name="报告书编号" prop="bgsbh" ></sa-td>
+					<sa-td name="报告分类" prop="bgfl" ></sa-td>
+					<sa-td name="报告日期" prop="bgrq" type="datetime"></sa-td>
+					<sa-td name="报送分类1" prop="bsfl1" ></sa-td>
+					<sa-td name="报送分类2" prop="bsfl2" ></sa-td>
+					<sa-td name="抽样时间" prop="cysj" type="datetime"></sa-td>
+					<sa-td name="抽样场所" prop="cycs" ></sa-td>
+					<sa-td name="抽样环节" prop="cyhj" ></sa-td>
+					<sa-td name="抽样编号" prop="cybh" ></sa-td>
+					<sa-td name="更新时间" prop="gxsj" type="datetime"></sa-td>
+					<sa-td name="被抽样单位名称" prop="bcydwmc" ></sa-td>
+					<sa-td name="被抽样单位地址" prop="bcydwdz" ></sa-td>
+					<sa-td name="标识生产企业名称" prop="bsscqymc" ></sa-td>
+					<sa-td name="标识生产企业地址" prop="bsscqydz" ></sa-td>
+					<sa-td name="样品名称" prop="ypmc" ></sa-td>
+					<sa-td name="食品亚类" prop="spyl" ></sa-td>
+					<sa-td name="食品大类" prop="spdl" ></sa-td>
+					<sa-td name="食品次亚类" prop="spcyl" ></sa-td>
+					<sa-td name="食品细类" prop="spxl" ></sa-td>
+					<sa-td name="样品规格" prop="ypgg" ></sa-td>
+					<sa-td name="生产日期" prop="scrq" type="datetime"></sa-td>
+					<sa-td name="样品状态" prop="ypzt" ></sa-td>
+					<sa-td name="创建时间" prop="cjrq" type="datetime"></sa-td>
+					<sa-td name="更新日期" prop="gxrq" type="datetime"></sa-td>
+					<sa-td name="记录id" prop="id" type="num"></sa-td>
+					<el-table-column label="操作" fixed="right"  width="240px">
+						<template slot-scope="s">
+							<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">查看</el-button>
+							<el-button class="c-btn" type="primary" icon="el-icon-edit" @click="update(s.row)">修改</el-button>
+							<el-button class="c-btn" type="danger" icon="el-icon-delete" @click="del(s.row)">删除</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+				<!-- ------------- 分页 ------------- -->
+				<sa-item type="page" :curr.sync="p.pageNo" :size.sync="p.pageSize" :total="dataCount" @change="f5()"></sa-item>
+			</div>
+		</div>
+		<script>
+			var app = new Vue({
+				components: {
+					"sa-item": httpVueLoader('../../sa-frame/com/sa-item.vue'),  
+					"sa-td": httpVueLoader('../../sa-frame/com/sa-td.vue'),		
+				},
+				el: '.vue-box',
+				data: {
+					p: { // 查询参数  
+						rwly: '',		// 任务来源 
+						rwlys: '',		// 任务来源省 
+						bgsbh: '',		// 报告书编号 
+						bgfl: '',		// 报告分类 
+						bsfl1: '',		// 报送分类1 
+						bsfl2: '',		// 报送分类2 
+						cycs: '',		// 抽样场所 
+						cyhj: '',		// 抽样环节 
+						cybh: '',		// 抽样编号 
+						bcydwmc: '',		// 被抽样单位名称 
+						bcydwdz: '',		// 被抽样单位地址 
+						bsscqymc: '',		// 标识生产企业名称 
+						bsscqydz: '',		// 标识生产企业地址 
+						ypmc: '',		// 样品名称 
+						spyl: '',		// 食品亚类 
+						spdl: '',		// 食品大类 
+						spcyl: '',		// 食品次亚类 
+						spxl: '',		// 食品细类 
+						ypgg: '',		// 样品规格 
+						ypzt: '',		// 样品状态 
+						id: '',		// 记录id 
+						pageNo: 1,		// 当前页 
+						pageSize: 10,	// 页大小 
+						sortType: 0		// 排序方式 
+					},
+					dataCount: 0,
+					dataList: [], // 数据集合 
+				},
+				methods: {
+					// 刷新
+					f5: function() {
+						sa.ajax('/ZqjcFullData/getList', sa.removeNull(this.p), function(res) {
+							this.dataList = res.data; // 数据
+							this.dataCount = res.dataCount; // 数据总数 
+							sa.f5TableHeight();		// 刷新表格高度 
+						}.bind(this));
+					},
+					// 查看
+					get: function(data) {
+						sa.showIframe('数据详情', 'zqjc-full-data-info.html?id=' + data.id, '1050px', '90%');
+					},
+					// 查看 - 根据选中的
+					getBySelect: function(data) {
+						var selection = this.$refs['data-table'].selection;
+						if(selection.length == 0) {
+							return sa.msg('请选择一条数据')
+						}
+						this.get(selection[0]);
+					},
+					// 修改
+					update: function(data) {
+						sa.showIframe('修改数据', 'zqjc-full-data-add.html?id=' + data.id, '1000px', '90%');
+					},
+					// 新增
+					add: function(data) {
+						sa.showIframe('新增数据', 'zqjc-full-data-add.html?id=-1', '1000px', '90%');
+					},
+					// 删除
+					del: function(data) {
+						sa.confirm('是否删除，此操作不可撤销', function() {
+							sa.ajax('/ZqjcFullData/delete?id=' + data.rwly, function(res) {
+								sa.arrayDelete(this.dataList, data);
+								sa.ok('删除成功');
+								sa.f5TableHeight();		// 刷新表格高度 
+							}.bind(this))
+						}.bind(this));
+					},
+					// 批量删除
+					deleteByIds: function() {
+						// 获取选中元素的id列表 
+						let selection = this.$refs['data-table'].selection;
+						let ids = sa.getArrayField(selection, 'id');
+						if(selection.length == 0) {
+							return sa.msg('请至少选择一条数据')
+						}
+						// 提交删除 
+						sa.confirm('是否批量删除选中数据？此操作不可撤销', function() {
+							sa.ajax('/ZqjcFullData/deleteByIds', {ids: ids.join(',')}, function(res) {
+								sa.arrayDelete(this.dataList, selection);
+								sa.ok('删除成功');
+								sa.f5TableHeight();		// 刷新表格高度 
+							}.bind(this))
+						}.bind(this));
+					},
+				},
+				created: function() {
+					this.f5();
+					sa.onInputEnter();
+				}
+			})
+		</script>
+	</body>
+</html>

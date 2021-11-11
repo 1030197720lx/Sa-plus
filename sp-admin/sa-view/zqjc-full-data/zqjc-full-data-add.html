@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>-添加/修改</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!-- 所有的 css js 资源 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css">
+		<link rel="stylesheet" href="../../static/sa.css">
+		<script src="https://unpkg.com/vue@2.6.10/dist/vue.js"></script>
+		<script src="https://unpkg.com/element-ui@2.13.0/lib/index.js"></script>
+		<script src="https://unpkg.com/http-vue-loader@1.4.2/src/httpVueLoader.js"></script>
+		<script src="https://unpkg.com/jquery@3.4.1/dist/jquery.js"></script>
+		<script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
+		<script src="../../static/sa.js"></script>
+		<style type="text/css">
+			.c-panel .el-form .c-label{width: 7em !important;}
+			.c-panel .el-form .el-input, .c-panel .el-form .el-textarea__inner{width: 250px;}
+		</style>
+	</head>
+	<body>
+		<div class="vue-box" :class="{sbot: id}" style="display: none;" :style="'display: block;'">
+			<!-- ------- 内容部分 ------- -->
+			<div class="s-body">
+				<div class="c-panel">
+                    <div class="c-title" v-if="id == 0">数据添加</div>
+					<div class="c-title" v-else>数据修改</div>
+					<el-form v-if="m">
+						<sa-item type="text" name="任务来源" v-model="m.rwly" br></sa-item>
+						<sa-item type="text" name="任务来源省" v-model="m.rwlys" br></sa-item>
+						<sa-item type="text" name="报告书编号" v-model="m.bgsbh" br></sa-item>
+						<sa-item type="text" name="报告分类" v-model="m.bgfl" br></sa-item>
+						<sa-item type="datetime" name="报告日期" v-model="m.bgrq" br></sa-item>
+						<sa-item type="text" name="报送分类1" v-model="m.bsfl1" br></sa-item>
+						<sa-item type="text" name="报送分类2" v-model="m.bsfl2" br></sa-item>
+						<sa-item type="datetime" name="抽样时间" v-model="m.cysj" br></sa-item>
+						<sa-item type="text" name="抽样场所" v-model="m.cycs" br></sa-item>
+						<sa-item type="text" name="抽样环节" v-model="m.cyhj" br></sa-item>
+						<sa-item type="text" name="抽样编号" v-model="m.cybh" br></sa-item>
+						<sa-item type="datetime" name="更新时间" v-model="m.gxsj" br></sa-item>
+						<sa-item type="text" name="被抽样单位名称" v-model="m.bcydwmc" br></sa-item>
+						<sa-item type="text" name="被抽样单位地址" v-model="m.bcydwdz" br></sa-item>
+						<sa-item type="text" name="标识生产企业名称" v-model="m.bsscqymc" br></sa-item>
+						<sa-item type="text" name="标识生产企业地址" v-model="m.bsscqydz" br></sa-item>
+						<sa-item type="text" name="样品名称" v-model="m.ypmc" br></sa-item>
+						<sa-item type="text" name="食品亚类" v-model="m.spyl" br></sa-item>
+						<sa-item type="text" name="食品大类" v-model="m.spdl" br></sa-item>
+						<sa-item type="text" name="食品次亚类" v-model="m.spcyl" br></sa-item>
+						<sa-item type="text" name="食品细类" v-model="m.spxl" br></sa-item>
+						<sa-item type="text" name="样品规格" v-model="m.ypgg" br></sa-item>
+						<sa-item type="datetime" name="生产日期" v-model="m.scrq" br></sa-item>
+						<sa-item type="text" name="样品状态" v-model="m.ypzt" br></sa-item>
+						<!-- date-create字段： m.cjrq - 创建时间 -->
+						<!-- date-update字段： m.gxrq - 更新日期 -->
+						<sa-item name="" class="s-ok" br>
+							<el-button type="primary" icon="el-icon-plus" @click="ok()">保存</el-button>
+						</sa-item>
+					</el-form>
+				</div>
+			</div>
+			<!-- ------- 底部按钮 ------- -->
+			<div class="s-foot">
+				<el-button type="primary" @click="ok()">确定</el-button>
+				<el-button @click="sa.closeCurrIframe()">取消</el-button>
+			</div>
+		</div>
+        <script>
+			
+			var app = new Vue({
+				components: {
+					"sa-item": httpVueLoader('../../sa-frame/com/sa-item.vue')
+				},
+				el: '.vue-box',
+				data: {
+					id: sa.p('id', 0),		// 获取超链接中的id参数（0=添加，非0=修改） 
+					m: null,		// 实体对象 
+				},
+				methods: {
+					// 创建一个 默认Model 
+					createModel: function() {
+						return {
+							rwly: '',		// 任务来源 
+							rwlys: '',		// 任务来源省 
+							bgsbh: '',		// 报告书编号 
+							bgfl: '',		// 报告分类 
+							bgrq: '',		// 报告日期 
+							bsfl1: '',		// 报送分类1 
+							bsfl2: '',		// 报送分类2 
+							cysj: '',		// 抽样时间 
+							cycs: '',		// 抽样场所 
+							cyhj: '',		// 抽样环节 
+							cybh: '',		// 抽样编号 
+							gxsj: '',		// 更新时间 
+							bcydwmc: '',		// 被抽样单位名称 
+							bcydwdz: '',		// 被抽样单位地址 
+							bsscqymc: '',		// 标识生产企业名称 
+							bsscqydz: '',		// 标识生产企业地址 
+							ypmc: '',		// 样品名称 
+							spyl: '',		// 食品亚类 
+							spdl: '',		// 食品大类 
+							spcyl: '',		// 食品次亚类 
+							spxl: '',		// 食品细类 
+							ypgg: '',		// 样品规格 
+							scrq: '',		// 生产日期 
+							ypzt: '',		// 样品状态 
+							// cjrq: '',		// 创建时间 
+							// gxrq: '',		// 更新日期 
+							id: '',		// 记录id 
+						}
+					},
+					// 提交数据 
+					ok: function(){
+						// 表单校验 
+						let m = this.m;
+						sa.checkNull(m.rwly, '请输入 [任务来源]');
+						sa.checkNull(m.rwlys, '请输入 [任务来源省]');
+						sa.checkNull(m.bgsbh, '请输入 [报告书编号]');
+						sa.checkNull(m.bgfl, '请输入 [报告分类]');
+						sa.checkNull(m.bgrq, '请输入 [报告日期]');
+						sa.checkNull(m.bsfl1, '请输入 [报送分类1]');
+						sa.checkNull(m.bsfl2, '请输入 [报送分类2]');
+						sa.checkNull(m.cysj, '请输入 [抽样时间]');
+						sa.checkNull(m.cycs, '请输入 [抽样场所]');
+						sa.checkNull(m.cyhj, '请输入 [抽样环节]');
+						sa.checkNull(m.cybh, '请输入 [抽样编号]');
+						sa.checkNull(m.gxsj, '请输入 [更新时间]');
+						sa.checkNull(m.bcydwmc, '请输入 [被抽样单位名称]');
+						sa.checkNull(m.bcydwdz, '请输入 [被抽样单位地址]');
+						sa.checkNull(m.bsscqymc, '请输入 [标识生产企业名称]');
+						sa.checkNull(m.bsscqydz, '请输入 [标识生产企业地址]');
+						sa.checkNull(m.ypmc, '请输入 [样品名称]');
+						sa.checkNull(m.spyl, '请输入 [食品亚类]');
+						sa.checkNull(m.spdl, '请输入 [食品大类]');
+						sa.checkNull(m.spcyl, '请输入 [食品次亚类]');
+						sa.checkNull(m.spxl, '请输入 [食品细类]');
+						sa.checkNull(m.ypgg, '请输入 [样品规格]');
+						sa.checkNull(m.scrq, '请输入 [生产日期]');
+						sa.checkNull(m.ypzt, '请输入 [样品状态]');
+						// sa.checkNull(m.cjrq, '请输入 [创建时间]');
+						// sa.checkNull(m.gxrq, '请输入 [更新日期]');
+						// sa.checkNull(m.id, '请输入 [记录id]');
+				
+						// 开始增加或修改
+						this.m.cjrq = undefined;		// 不提交属性：创建时间
+						this.m.gxrq = undefined;		// 不提交属性：更新日期
+						if(this.id <= 0) {	// 添加
+							sa.ajax('/ZqjcFullData/add', m, function(res){
+								sa.alert('增加成功', this.clean); 
+							}.bind(this));
+						} else {	// 修改
+							sa.ajax('/ZqjcFullData/update', m, function(res){
+								sa.alert('修改成功', this.clean);
+							}.bind(this));
+						}
+					},
+					// 添加/修改 完成后的动作
+					clean: function() {
+						if(this.id == 0) {
+							this.m = this.createModel();
+						} else {
+							parent.app.f5();		// 刷新父页面列表
+							sa.closeCurrIframe();	// 关闭本页 
+						}
+					}
+				},
+				mounted: function(){
+					// 初始化数据 
+					if(this.id <= 0) {	
+						this.m = this.createModel();
+					} else {	
+						sa.ajax('/ZqjcFullData/getById?id=' + this.id, function(res) {
+							this.m = res.data;
+							if(res.data == null) {
+								sa.alert('未能查找到 id=' + this.id + " 详细数据");
+							}
+						}.bind(this))
+					}
+				}
+			})
+			
+		</script>
+	</body>
+</html>
